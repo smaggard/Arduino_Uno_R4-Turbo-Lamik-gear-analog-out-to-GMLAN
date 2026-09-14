@@ -18,20 +18,20 @@ void sendCANMsg(float value, uint32_t canId) {
     transMessage[3] = 0x01;
     transMessage[6] = 0x03;
   }
-  else if (value >= 0.2 && value <= 0.0) { // Reverse
+  else if (value >= 0.0 && value <= 0.25) { // Reverse
     transMessage[0] = 0x0E;
     transMessage[1] = 0x0E;
     transMessage[3] = 0x02;
     transMessage[6] = 0x02;
   }
-  else if (value >= 0.3 && value <= 0.7)  // Neutral
+  else if (value >= 0.26 && value <= 0.75)  // Neutral
   {
     transMessage[0] = 0x0D;
     transMessage[1] = 0x0D;
     transMessage[3] = 0x03;
     transMessage[6] = 0x03;
   }
-  else if (value >= 0.75 && value <= 1.25)  // First
+  else if (value >= 0.76 && value <= 1.25)  // First
   {
     transMessage[0] = 0x01;
     transMessage[1] = 0x01;
@@ -97,11 +97,17 @@ void sendCANMsg(float value, uint32_t canId) {
   transMessage[4] = 0x00;
   transMessage[5] = 0x00;
   transMessage[7] = 0x00;
-  for (int i = 0; i < sizeof(transMessage); i++)
-  {
-    Serial.print(transMessage[i], HEX);   
-  }
-  Serial.println();
+
+  // Debug
+  // for (int i = 0; i < sizeof(transMessage); i++)
+  // {
+  //   Serial.print(transMessage[i], HEX);   
+  // }
+  // Serial.println();
+  // Serial.println(value);
+  // End Debug
+  
+  // Construct CAN message and send it.
   CanMsg const msg(CanStandardId(canId), sizeof(transMessage), transMessage);
   int const rc = CAN.write(msg);
   if (rc <= 0) {
@@ -132,7 +138,7 @@ void setup() {
 void loop() {
   // Read the value from the TL gear analog out connected to pin A0
   int sensorValue = analogRead(A0);
-
+  // Serial.println(sensorValue); // Debug
   // Convert to 5.0V scale
   float voltage = sensorValue * (5.0 / 1023.0);
 
