@@ -5,4 +5,4 @@
 
 ## Turbo Lamik Settings
 * Configure the following settings in Tuner Pro and push them to your Turbo Lamik
-![Turbo Lamik Settings](Turbo Lamik Settings.png)
+![Turbo Lamik Settings](Turbo-Lamik-Settings.png)
