@@ -16,7 +16,7 @@ void sendCANMsg(float value, uint32_t canId) {
     transMessage[0] = 0x0F;
     transMessage[1] = 0x0F;
     transMessage[3] = 0x01;
-    transMessage[6] = 0x03;
+    transMessage[6] = 0x00;
   }
   else if (value >= 0.0 && value <= 0.25) { // Reverse
     transMessage[0] = 0x0E;
@@ -29,69 +29,69 @@ void sendCANMsg(float value, uint32_t canId) {
     transMessage[0] = 0x0D;
     transMessage[1] = 0x0D;
     transMessage[3] = 0x03;
-    transMessage[6] = 0x03;
+    transMessage[6] = 0x00;
   }
   else if (value >= 0.76 && value <= 1.25)  // First
   {
     transMessage[0] = 0x01;
     transMessage[1] = 0x01;
-    transMessage[3] = 0x03;
+    transMessage[3] = 0x04;
     transMessage[6] = 0x03;
   }
   else if (value >= 1.26 && value <= 1.75)  // Second
   {
     transMessage[0] = 0x02;
     transMessage[1] = 0x02;
-    transMessage[3] = 0x03;
+    transMessage[3] = 0x04;
     transMessage[6] = 0x03;
   }
   else if (value >= 1.76 && value <= 2.25)  // Third
   {
     transMessage[0] = 0x03;
     transMessage[1] = 0x03;
-    transMessage[3] = 0x03;
+    transMessage[3] = 0x04;
     transMessage[6] = 0x03;
   }
   else if (value >= 2.26 && value <= 2.75)  // Fourth
   {
     transMessage[0] = 0x04;
     transMessage[1] = 0x04;
-    transMessage[3] = 0x03;
+    transMessage[3] = 0x04;
     transMessage[6] = 0x03;
   }
   else if (value >= 2.76 && value <= 3.25)  // Fifth
   {
     transMessage[0] = 0x05;
     transMessage[1] = 0x05;
-    transMessage[3] = 0x03;
+    transMessage[3] = 0x04;
     transMessage[6] = 0x03;
   }
   else if (value >= 3.26 && value <= 3.75)  // Sixth
   {
     transMessage[0] = 0x06;
     transMessage[1] = 0x06;
-    transMessage[3] = 0x03;
+    transMessage[3] = 0x04;
     transMessage[6] = 0x03;
   }
   else if (value >= 3.76 && value <= 4.25)  // Seventh
   {
     transMessage[0] = 0x07;
     transMessage[1] = 0x0D;
-    transMessage[3] = 0x03;
+    transMessage[3] = 0x04;
     transMessage[6] = 0x03;
   }
   else if (value >= 4.26 && value <= 4.75)  // Eighth
   {
     transMessage[0] = 0x08;
     transMessage[1] = 0x0D;
-    transMessage[3] = 0x03;
+    transMessage[3] = 0x04;
     transMessage[6] = 0x03;
   }
   else {
     transMessage[0] = 0x0F;
     transMessage[1] = 0x0F;
-    transMessage[3] = 0x04;
-    transMessage[6] = 0x01;
+    transMessage[3] = 0x01;
+    transMessage[6] = 0x00;
   }
   transMessage[2] = 0x00;
   transMessage[4] = 0x00;
