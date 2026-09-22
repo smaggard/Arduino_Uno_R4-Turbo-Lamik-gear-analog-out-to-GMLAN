@@ -7,16 +7,19 @@
 #include <tuple>
 #include <Arduino.h>
 
+int PIN = A0;
+int PID = 0x1F5;
+int AVG_COUNT = 10;
+
 void sendCANMsg(float value, uint32_t canId) {
   // Function to send CAN Messages containing the value value provided
   // on the CAN ID provided.
 
-  unsigned char transMessage[8];
-  if (value >= 4.76 && value <= 5.1) { // Park
+  unsigned char transMessage[8] = {0};
+  if (value >= 4.76 && value <= 5.0) { // Park
     transMessage[0] = 0x0F;
     transMessage[1] = 0x0F;
     transMessage[3] = 0x01;
-    transMessage[6] = 0x00;
   }
   else if (value >= 0.0 && value <= 0.25) { // Reverse
     transMessage[0] = 0x0E;
@@ -29,7 +32,6 @@ void sendCANMsg(float value, uint32_t canId) {
     transMessage[0] = 0x0D;
     transMessage[1] = 0x0D;
     transMessage[3] = 0x03;
-    transMessage[6] = 0x00;
   }
   else if (value >= 0.76 && value <= 1.25)  // First
   {
@@ -76,27 +78,20 @@ void sendCANMsg(float value, uint32_t canId) {
   else if (value >= 3.76 && value <= 4.25)  // Seventh
   {
     transMessage[0] = 0x07;
-    transMessage[1] = 0x0D;
+    transMessage[1] = 0x07;
     transMessage[3] = 0x04;
     transMessage[6] = 0x03;
   }
   else if (value >= 4.26 && value <= 4.75)  // Eighth
   {
     transMessage[0] = 0x08;
-    transMessage[1] = 0x0D;
+    transMessage[1] = 0x08;
     transMessage[3] = 0x04;
     transMessage[6] = 0x03;
   }
   else {
-    transMessage[0] = 0x0F;
-    transMessage[1] = 0x0F;
-    transMessage[3] = 0x01;
-    transMessage[6] = 0x00;
+    // Leave the array alone and send all 00's 
   }
-  transMessage[2] = 0x00;
-  transMessage[4] = 0x00;
-  transMessage[5] = 0x00;
-  transMessage[7] = 0x00;
 
   // Debug
   // for (int i = 0; i < sizeof(transMessage); i++)
@@ -118,13 +113,21 @@ void sendCANMsg(float value, uint32_t canId) {
   
 }
 
+int readAnalogAverage(int pin) {
+  long total = 0;
+  for (int i=0; i < AVG_COUNT; i++ ) {
+    total += analogRead(pin);
+  } 
+  return total / AVG_COUNT;
+}
+
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
   while (!Serial) {
     ;
   }
-
+  analogReference(AR_EXTERNAL);
   //Start CAN
   if (!CAN.begin(CanBitRate::BR_500k)) {
     Serial.println("CAN.begin(...) failed.");
@@ -137,14 +140,16 @@ void setup() {
 
 void loop() {
   // Read the value from the TL gear analog out connected to pin A0
-  int sensorValue = analogRead(A0);
+  int sensorValue = readAnalogAverage(PIN);
+ 
   // Serial.println(sensorValue); // Debug
+  
   // Convert to 5.0V scale
   float voltage = sensorValue * (5.0 / 1023.0);
 
   // Send Can messages
-  sendCANMsg(voltage, 0x1F5);
+  sendCANMsg(voltage, PID);
   
-  // Sleep 25ms to match GM spec
-  delay(25);
+  // Sleep 250ms
+  delay(250);
 }
