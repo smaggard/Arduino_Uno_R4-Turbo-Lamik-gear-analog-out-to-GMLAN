@@ -10,8 +10,28 @@
 int PIN = A0;
 int PID = 0x1F5;
 int AVG_COUNT = 10;
+void sendCANMsg(unsigned char transMessage[8], uint32_t canId) {
+  // Debug
+  // for (int i = 0; i < sizeof(transMessage); i++)
+  // {
+  //   Serial.print(transMessage[i], HEX);   
+  // }
+  // Serial.println();
+  // Serial.println(value);
+  // End Debug
+  
+  // Construct CAN message and send it.
+  CanMsg const msg(CanStandardId(canId), sizeof(transMessage), transMessage);
+  int const rc = CAN.write(msg);
+  if (rc <= 0) {
+    CAN.end();
+    CAN.begin(CanBitRate::BR_500k);
+  }
+  
+  //Serial.println(rc);
+}
 
-void sendCANMsg(float value, uint32_t canId) {
+unsigned char createCANMsg(float value) {
   // Function to send CAN Messages containing the value value provided
   // on the CAN ID provided.
 
@@ -92,25 +112,7 @@ void sendCANMsg(float value, uint32_t canId) {
   else {
     // Leave the array alone and send all 00's 
   }
-
-  // Debug
-  // for (int i = 0; i < sizeof(transMessage); i++)
-  // {
-  //   Serial.print(transMessage[i], HEX);   
-  // }
-  // Serial.println();
-  // Serial.println(value);
-  // End Debug
-  
-  // Construct CAN message and send it.
-  CanMsg const msg(CanStandardId(canId), sizeof(transMessage), transMessage);
-  int const rc = CAN.write(msg);
-  if (rc <= 0) {
-    CAN.end();
-    CAN.begin(CanBitRate::BR_500k);
-  }
-  //Serial.println(rc);
-  
+  return transMessage;
 }
 
 int readAnalogAverage(int pin) {
@@ -147,8 +149,10 @@ void loop() {
   // Convert to 5.0V scale
   float voltage = sensorValue * (5.0 / 1023.0);
 
+  // Create the CAN message
+  unsigned char transMessage[8] = creaateCANMsg(voltage);
   // Send Can messages
-  sendCANMsg(voltage, PID);
+  sendCANMsg(transMessage, PID);
   
   // Sleep 250ms
   delay(250);
