@@ -10,6 +10,7 @@
 int PIN = A0;
 int PID = 0x1F5;
 int AVG_COUNT = 10;
+
 void sendCANMsg(unsigned char transMessage[8], uint32_t canId) {
   // Debug
   // for (int i = 0; i < sizeof(transMessage); i++)
@@ -27,7 +28,6 @@ void sendCANMsg(unsigned char transMessage[8], uint32_t canId) {
     CAN.end();
     CAN.begin(CanBitRate::BR_500k);
   }
-  
   //Serial.println(rc);
 }
 
